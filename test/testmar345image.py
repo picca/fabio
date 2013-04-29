@@ -89,7 +89,7 @@ class testMAR345(unittest.TestCase):
             logger.debug("Testing for memory leak")
             for i in range(1000):
                 img = fabio.open(self.mar)
-                print i
+                print("reading %i/1000" % i)
 
 
 

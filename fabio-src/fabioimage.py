@@ -13,7 +13,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 from __future__ import with_statement
-import os, types, logging, sys, tempfile
+import os, logging, sys, tempfile
 logger = logging.getLogger("fabioimage")
 import numpy
 try:
@@ -22,6 +22,11 @@ except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
 from . import fabioutils, converters
+
+if sys.version_info[0] < 3:
+    from types import StringTypes
+else:
+    StringTypes = (str, bytes)
 
 
 class fabioimage(object):
@@ -38,7 +43,7 @@ class fabioimage(object):
         Set up initial values
         """
         self._classname = None
-        if type(data) in types.StringTypes:
+        if type(data) in StringTypes:
             raise Exception("fabioimage.__init__ bad argument - " + \
                             "data should be numpy array")
         self.data = self.checkData(data)
@@ -436,7 +441,7 @@ class fabioimage(object):
         Convert a fabioimage object into another fabioimage object (with possible conversions)
         @param dest: destination type "EDF", "edfimage" or the class itself
         """
-        if type(dest) in types.StringTypes:
+        if type(dest) in StringTypes:
             dest = dest.lower()
             modules = []
             for val  in fabioutils.FILETYPES.values():
