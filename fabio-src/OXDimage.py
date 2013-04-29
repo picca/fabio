@@ -22,8 +22,8 @@ Authors:
 import time, logging, struct
 logger = logging.getLogger("OXDimage")
 import numpy
-from fabioimage import fabioimage
-from compression import decTY1, compTY1
+from .fabioimage import fabioimage
+from .compression import decTY1, compTY1
 
 try:
     from numpy import rad2deg, deg2rad
@@ -117,7 +117,7 @@ class OXDimage(fabioimage):
         self.header['Spatial correction file'] = block[26:272].strip("\x00")
         self.header['Spatial correction file date'] = block[0:26].strip("\x00")
         # Angles are in steps due to stepper motors - conversion factor RAD
-        # angle[0] = omega, angle[1] = theta, angle[2] = kappa, angle[3] = phi,   
+        # angle[0] = omega, angle[1] = theta, angle[2] = kappa, angle[3] = phi,
         start_angles_step = numpy.fromstring(block[284:304], numpy.int32)
         end_angles_step = numpy.fromstring(block[324:344], numpy.int32)
         step2rad = numpy.fromstring(block[368:408], numpy.float)
@@ -211,7 +211,7 @@ class OXDimage(fabioimage):
                 raw16 = infile.read(self.header['OI'] * 2)
             if self.header['OL'] > 0:
                 raw32 = infile.read(self.header['OL'] * 4)
-            #DEBUG stuff ... 
+            # DEBUG stuff ...
             self.raw8 = raw8
             self.raw16 = raw16
             self.raw32 = raw32
@@ -245,8 +245,8 @@ class OXDimage(fabioimage):
                 self.header[key] = DEFAULT_HEADERS[key]
 
         if "NX" not in self.header.keys() or "NY" not in self.header.keys():
-			self.header['NX'] = self.dim1
-			self.header['NY'] = self.dim2
+            self.header['NX'] = self.dim1
+            self.header['NY'] = self.dim2
         ascii_headers = [self.header['Header Version'],
                        "COMPRESSION=%s (%5.1f)" % (self.header["Compression"], self.getCompressionRatio()),
                        "NX=%4i NY=%4i OI=%7i OL=%7i " % (self.header["NX"], self.header["NY"], self.header["OI"], self.header["OL"]),
@@ -381,7 +381,7 @@ class OXDimage(fabioimage):
 
     def write(self, fname):
         """Write Oxford diffraction images: this is still beta
-        @param fname: output filename 
+        @param fname: output filename
         """
         datablock8, datablock16, datablock32 = compTY1(self.data)
         self.header["OI"] = len(datablock16) / 2

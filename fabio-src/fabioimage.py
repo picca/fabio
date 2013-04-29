@@ -21,7 +21,7 @@ try:
 except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
-import fabioutils, converters
+from . import fabioutils, converters
 
 
 class fabioimage(object):
@@ -551,7 +551,7 @@ def test():
     ftest.close()
     clean()
 
-    print "Passed in", time.time() - start, "s"
+    print("Passed in %.3f s" % (time.time() - start))
 
 if __name__ == '__main__':
     test()

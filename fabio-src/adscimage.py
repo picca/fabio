@@ -14,7 +14,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 
 import numpy, logging
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 logger = logging.getLogger("adscimage")
 
 class adscimage(fabioimage):
@@ -50,8 +50,8 @@ class adscimage(fabioimage):
                     numpy.fromstring(binary, numpy.uint16),
                     (self.dim2, self.dim1))
             except ValueError:
-                raise IOError, 'Size spec in ADSC-header does not match ' + \
-                    'size of image data field'
+                raise IOError('Size spec in ADSC-header does not match ' + \
+                    'size of image data field')
             self.bytecode = numpy.uint16
             logger.info("adscimage read in using low byte first (x386-order)")
         else:
@@ -60,8 +60,8 @@ class adscimage(fabioimage):
                     numpy.fromstring(binary, numpy.uint16),
                     (self.dim2, self.dim1)).byteswap()
             except ValueError:
-                raise IOError, 'Size spec in ADSC-header does not match ' + \
-                    'size of image data field'
+                raise IOError('Size spec in ADSC-header does not match ' + \
+                    'size of image data field')
             self.bytecode = numpy.uint16
             logger.info('adscimage using high byte first (network order)')
         self.resetvals()
@@ -88,7 +88,7 @@ class adscimage(fabioimage):
         out = '{\n'
         for key in self.header_keys:
             out += "%s = %s;\n" % (key, self.header[key])
-        # FIXME ??? - made padding match header bytes keyword            
+        # FIXME ??? - made padding match header bytes keyword
         #        the cbflib example image has exactly 512...
         if self.header.has_key("HEADER_BYTES"):
             pad = int(self.header["HEADER_BYTES"]) - len(out) - 2
@@ -124,13 +124,13 @@ def test():
 #        rim = img.toPIL16()
         img.rebin(2, 2)
         img.write('jegErEnFil0000.img')
-        print sys.argv[1] + ": max=%d, min=%d, mean=%.2e, stddev=%.2e" % (\
-              img.getmax(), img.getmin(), img.getmean(), img.getstddev())
-        print 'integrated intensity (%d %d %d %d) =%.3f' % (\
-              10, 20, 20, 40, img.integrate_area((10, 20, 20, 40)))
+        print(sys.argv[1] + ": max=%d, min=%d, mean=%.2e, stddev=%.2e" % (\
+              img.getmax(), img.getmin(), img.getmean(), img.getstddev()))
+        print('integrated intensity (%d %d %d %d) =%.3f' % (\
+              10, 20, 20, 40, img.integrate_area((10, 20, 20, 40))))
         sys.argv[1:] = sys.argv[2:]
     end = time.clock()
-    print end - begin
+    print("Execution time: %s" % (end - begin))
 
 
 if __name__ == '__main__':

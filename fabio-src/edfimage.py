@@ -22,9 +22,9 @@ from __future__ import with_statement
 import os, logging, types
 logger = logging.getLogger("edfimage")
 import numpy
-from fabioimage import fabioimage
-from fabioutils import isAscii, toAscii, nice_int
-from compression import decBzip2, decGzip, decZlib
+from .fabioimage import fabioimage
+from .fabioutils import isAscii, toAscii, nice_int
+from .compression import decBzip2, decGzip, decZlib
 
 
 BLOCKSIZE = 512
@@ -273,7 +273,7 @@ class Frame(object):
                 if "OFFSET" in compression :
                     try:
                         import byte_offset#IGNORE:F0401
-                    except ImportError, error:
+                    except ImportError as error:
                         logger.error("Unimplemented compression scheme:  %s (%s)" % (compression, error))
                     else:
                         myData = byte_offset.analyseCython(fileData, size=uncompressed_size)
@@ -442,7 +442,7 @@ class edfimage(fabioimage):
         self.filesize = None
         try:
             dim = len(data.shape)
-        except Exception, error: #IGNORE:W0703
+        except Exception as  error:  # IGNORE:W0703
             logger.debug("Data don't look like a numpy array (%s), resetting all!!" % error)
             data = None
             dim = 0
@@ -538,7 +538,7 @@ class edfimage(fabioimage):
             self.__frames += [frame]
             try:
                 infile.seek(size, os.SEEK_CUR)
-            except Exception, error:
+            except Exception as  error:
                 logger.warning("infile is %s" % infile)
                 logger.warning("Position is %s" % infile.tell())
                 logger.warning("size is %s" % size)
@@ -690,8 +690,8 @@ class edfimage(fabioimage):
     def fastReadData(self, filename=None):
         """
         This is a special method that will read and return the data from another file ...
-        The aim is performances, ... but only supports uncompressed files. 
-         
+        The aim is performances, ... but only supports uncompressed files.
+
         @return: data from another file using positions from current edfimage
         """
         if (filename is None) or not os.path.isfile(filename):
@@ -704,7 +704,7 @@ class edfimage(fabioimage):
         try:
             data = numpy.fromstring(raw, dtype=self.bytecode)
             data.shape = self.data.shape
-        except Exception, err :
+        except Exception as  err :
             logger.error("unable to convert file content to numpy array: %s", err)
         return data
 
@@ -712,7 +712,7 @@ class edfimage(fabioimage):
         """
         Method reading Region of Interest of another file  based on metadata available in current edfimage.
         The aim is performances, ... but only supports uncompressed files.
-        
+
         @return: ROI-data from another file using positions from current edfimage
         @rtype: numpy 2darray
         """
@@ -742,7 +742,7 @@ class edfimage(fabioimage):
         try:
             data = numpy.fromstring(raw, dtype=self.bytecode)
             data.shape = -1, d1
-        except Exception, err :
+        except Exception as  err :
             logger.error("unable to convert file content to numpy array: %s", err)
         return data[slice2]
 

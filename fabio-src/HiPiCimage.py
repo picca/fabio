@@ -15,7 +15,7 @@ Information about the file format from Masakatzu Kobayashi is highly appreciated
 
 import numpy, logging
 logger = logging.getLogger("HiPiCimage")
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 
 class HiPiCimage(fabioimage):
     """ Read HiPic images e.g. collected with a Hamamatsu CCD camera"""
@@ -27,7 +27,7 @@ class HiPiCimage(fabioimage):
 
         """
         Image_tag = infile.read(2)
-        print Image_tag
+        print(Image_tag)
         Comment_len = numpy.fromstring(infile.read(2), numpy.uint16)
         Dim_1 = numpy.fromstring(infile.read(2), numpy.uint16)[0]
         Dim_2 = numpy.fromstring(infile.read(2), numpy.uint16)[0]
@@ -88,14 +88,14 @@ class HiPiCimage(fabioimage):
                 numpy.fromstring(block, bytecode),
                 [self.dim2, self.dim1])
         except:
-            print len(block), bytecode, self.bpp, self.dim2, self.dim1
-            raise IOError, \
-              'Size spec in HiPic-header does not match size of image data field'
+            print(len(block), bytecode, self.bpp, self.dim2, self.dim1)
+            raise IOError(
+              'Size spec in HiPic-header does not match size of image data field')
         self.bytecode = self.data.dtype.type
 
         # Sometimes these files are not saved as 12 bit,
-        # But as 16 bit after bg subtraction - which results 
-        # negative values saved as 16bit. Therefore values higher 
+        # But as 16 bit after bg subtraction - which results
+        # negative values saved as 16bit. Therefore values higher
         # 4095 is really negative values
         if self.data.max() > 4095:
             gt12bit = self.data > 4095

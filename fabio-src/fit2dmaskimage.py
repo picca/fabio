@@ -9,7 +9,7 @@ Translation into python/fabio: Jon Wright, ESRF
 
 import numpy
 
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 
 
 class fit2dmaskimage(fabioimage):

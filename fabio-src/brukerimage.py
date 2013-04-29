@@ -15,8 +15,8 @@ Based on: openbruker,readbruker, readbrukerheader functions in the opendata
 
 import numpy, logging
 logger = logging.getLogger("brukerimage")
-from fabioimage import fabioimage
-from readbytestream import readbytestream
+from .fabioimage import fabioimage
+from .readbytestream import readbytestream
 
 
 class brukerimage(fabioimage):
@@ -179,12 +179,12 @@ def test():
         img.read(filename)
         res = img.toPIL16()
         img.rebin(2, 2)
-        print filename + (": max=%d, min=%d, mean=%.2e, stddev=%.2e") % (
-            img.getmax(), img.getmin(), img.getmean(), img.getstddev())
-        print 'integrated intensity (%d %d %d %d) =%.3f' % (
-            10, 20, 20, 40, img.integrate_area((10, 20, 20, 40)))
+        print ("%s: max=%d, min=%d, mean=%.2e, stddev=%.2e" % (filename,
+            img.getmax(), img.getmin(), img.getmean(), img.getstddev()))
+        print('integrated intensity (%d %d %d %d) =%.3f' % (
+            10, 20, 20, 40, img.integrate_area((10, 20, 20, 40))))
     end = time.clock()
-    print (end - start)
+    print(end - start)
 
 
 

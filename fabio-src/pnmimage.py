@@ -13,7 +13,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 import numpy, logging
 logger = logging.getLogger("pnmimage")
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 
 SUBFORMATS = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7']
 
@@ -41,7 +41,7 @@ class pnmimage(fabioimage):
 
         l = f.readline().strip()
         if l not in SUBFORMATS:
-            raise IOError, ('unknown subformat of pnm: %s' % l)
+            raise IOError('unknown subformat of pnm: %s' % l)
         else:
             self.header['SUBFORMAT'] = l
 
@@ -53,7 +53,7 @@ class pnmimage(fabioimage):
                 while(l[0] == '#'): l = f.readline()
                 s = l.lsplit(' ', 1)
                 if s[0] not in P7HEADERITEMS:
-                    raise IOError, ('Illegal pam (netpnm p7) headeritem %s' % s[0])
+                    raise IOError('Illegal pam (netpnm p7) headeritem %s' % s[0])
                 self.header[s[0]] = s[1]
         else:
             self.header_keys = HEADERITEMS
@@ -72,11 +72,11 @@ class pnmimage(fabioimage):
             self.bytecode = numpy.uint8
         elif m < 65536:
             self.bytecode = numpy.uint16
-        elif m < 2147483648L:
+        elif m < 2147483648:
             self.bytecode = numpy.uint32
             logger.warning('32-bit pixels are not really supported by the netpgm standard')
         else:
-            raise IOError, 'could not figure out what kind of pixels you have'
+            raise IOError('could not figure out what kind of pixels you have')
 
     def read(self, fname, frame=None):
         """
@@ -107,7 +107,7 @@ class pnmimage(fabioimage):
             try:
                 data[i, :] = numpy.array(l.split()).astype(bytecode)
             except ValueError:
-                raise IOError, 'Size spec in pnm-header does not match size of image data field'
+                raise IOError('Size spec in pnm-header does not match size of image data field')
         return data
 
     @staticmethod
@@ -124,7 +124,7 @@ class pnmimage(fabioimage):
             try:
                 data[i, :] = numpy.array(l.split()).astype(bytecode)
             except ValueError:
-                raise IOError, 'Size spec in pnm-header does not match size of image data field'
+                raise IOError('Size spec in pnm-header does not match size of image data field')
         return data
 
     @staticmethod
@@ -133,7 +133,7 @@ class pnmimage(fabioimage):
         try:
             data = numpy.reshape(numpy.fromstring(l, bytecode), [self.dim2, self.dim1]).byteswap()
         except ValueError:
-            raise IOError, 'Size spec in pnm-header does not match size of image data field'
+            raise IOError('Size spec in pnm-header does not match size of image data field')
         return data
 
     @staticmethod

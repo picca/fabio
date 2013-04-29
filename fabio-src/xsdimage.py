@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # coding: utf8
 """
-Authors: Jérôme Kieffer, ESRF 
+Authors: Jérôme Kieffer, ESRF
          email:jerome.kieffer@esrf.fr
 
-XSDimge are XML files containing numpy arrays 
+XSDimge are XML files containing numpy arrays
 """
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
@@ -13,7 +13,7 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging, numpy
 logger = logging.getLogger("xsdimage")
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 import base64, hashlib
 try:
     from lxml import etree
@@ -22,8 +22,8 @@ except ImportError:
     etree = None
 
 class xsdimage(fabioimage):
-    """ 
-    Read the XSDataImage XML File data format 
+    """
+    Read the XSDataImage XML File data format
     """
     def __init__(self, data=None, header=None, fname=None):
         """
@@ -102,12 +102,12 @@ class xsdimage(fabioimage):
         for i in xml.xpath("//shape"):
             try:
                 self.dims.append(int(i.text))
-            except ValueError, error:
+            except ValueError as error:
                 logger.warning("%s Shape: Unable to convert %s to integer in %s" % (error, i.text, i))
         for i in xml.xpath("//size"):
             try:
                 self.size = int(i.text)
-            except Exception, error:#IGNORE:W0703
+            except Exception as error:  # IGNORE:W0703
                 logger.warning("%s Size: Unable to convert %s to integer in %s" % (error, i.text, i))
         self.dtype = None
         for i in xml.xpath("//dtype"):
