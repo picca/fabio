@@ -65,17 +65,17 @@ def read(py_file, mode="a"):
     file=fopen(fname, "r");
 
     if "z" in mode:
-      flags|=CF_GZ_COMP
+        flags|=CF_GZ_COMP
     if "b" in mode:
-      cf__=<cf_data *> cf_read_bin(file,NULL,flags)
+        cf__=<cf_data *> cf_read_bin(file,NULL,flags)
     elif "a" in mode:
-      cf__=<cf_data *> cf_read_ascii(file,NULL,flags)
+        cf__=<cf_data *> cf_read_ascii(file,NULL,flags)
     else:
-      sys.stderr.write("unrecognized mode for columnfile %s (assuming ascii)\n",mode)
-      cf__= <cf_data *> cf_read_ascii(file,NULL,flags);
+        sys.stderr.write("unrecognized mode for columnfile %s (assuming ascii)\n",mode)
+        cf__= <cf_data *> cf_read_ascii(file,NULL,flags);
 #    check for failure to read
     if (cf__==NULL):
-      return None, None
+        return None, None
     dims=(cf__.nrows,cf__.ncols)
 
     #since data may be non-contigous we can't simply create a numpy-array from cf__->data, as Numpy's memory model prohibits it

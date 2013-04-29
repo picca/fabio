@@ -16,7 +16,7 @@ from numpy.distutils.misc_util import get_numpy_include_dirs
 
 
 cf_backend = Extension('cf_io', include_dirs=get_numpy_include_dirs(),
-      sources=['src/cf_iomodule.c', 'src/columnfile.c'])
+      sources=['src/cf_io.c', 'src/columnfile.c'])
 
 byteOffset_backend = Extension("byte_offset",
                        include_dirs=get_numpy_include_dirs(),

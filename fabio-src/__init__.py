@@ -14,14 +14,14 @@ __status__ = "stable"
 version = "0.1.3"
 import logging
 logging.basicConfig()
-import fabioimage
-import openimage
-from fabioutils import COMPRESSORS, jump_filename, FilenameObject, \
+from . import fabioimage
+from . import openimage
+from .fabioutils import COMPRESSORS, jump_filename, FilenameObject, \
         previous_filename, next_filename, deconstruct_filename, \
         extract_filenumber, getnum, construct_filename
 
 # Compatibility with outside world:
 filename_object = FilenameObject
 
-from openimage import openimage as open
-from openimage import openheader as openheader
+from .openimage import openimage as open
+from .openimage import openheader as openheader
