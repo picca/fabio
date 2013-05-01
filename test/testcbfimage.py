@@ -11,6 +11,12 @@ http://pilatus.web.psi.ch/DATA/DATASETS/insulin_0.2/
 import unittest, sys, os, logging, tempfile
 logger = logging.getLogger("testcbfimage")
 force_build = False
+if sys.version_info[0] < 3:
+    from types import StringTypes
+    bytes = str
+else:
+    StringTypes = (str, bytes)
+    unicode = str
 
 for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*- 
+# -*- coding: utf8 -*-
 """
 Test cases for the fabioimage class
 
@@ -31,6 +31,7 @@ import fabio
 from fabio.fabioimage import fabioimage
 import numpy
 import gzip, bz2
+
 
 class test50000(unittest.TestCase):
     """ test with 50000 everywhere"""
@@ -116,16 +117,19 @@ class testopen(unittest.TestCase):
     def testFlat(self):
         """ no compression"""
         res = self.obj._open(self.testfile).read()
+        if sys.version_info[0] >= 3:res = res.decode("ascii")
         self.assertEqual(res , "{ hello }")
 
     def testgz(self):
         """ gzipped """
         res = self.obj._open(self.testfile + ".gz").read()
+        if sys.version_info[0] >= 3:res = res.decode("ascii")
         self.assertEqual(res , "{ hello }")
 
     def testbz2(self):
         """ bzipped"""
         res = self.obj._open(self.testfile + ".bz2").read()
+        if sys.version_info[0] >= 3:res = res.decode("ascii")
         self.assertEqual(res , "{ hello }")
 
 

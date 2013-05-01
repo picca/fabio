@@ -11,6 +11,7 @@ __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
+import sys
 import logging, numpy
 logger = logging.getLogger("xsdimage")
 from .fabioimage import fabioimage
@@ -20,6 +21,7 @@ try:
 except ImportError:
     logger.warning("lxml library is probably not part of your python installation: disabling xsdimage format")
     etree = None
+
 
 class xsdimage(fabioimage):
     """
@@ -119,7 +121,10 @@ class xsdimage(fabioimage):
                 self.coding = j.text
         self.rawData = None
         for i in xml.xpath("//data"):
-            self.rawData = i.text
+            if sys.version_info[0] < 3:
+                self.rawData = i.text
+            else:
+                self.rawData = bytes(i.text, "ascii")
         self.md5 = None
         for i in xml.xpath("//md5sum"):
             j = i.find("value")

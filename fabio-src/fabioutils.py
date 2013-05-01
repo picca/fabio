@@ -360,7 +360,8 @@ class StringIO(stringIO):
     """
     def __init__(self, data, fname=None, mode="r"):
         stringIO.__init__(self, data)
-        self.closed = False
+        if sys.version_info[0] < 3:
+            self.closed = False
         if fname == None:
             self.name = "fabioStream"
         else:
@@ -405,7 +406,10 @@ class File(file):
 
         'U' cannot be combined with 'w' or '+' mode.
         """
-        file.__init__(self, name, mode, buffering)
+        if sys.version_info[0] < 3:
+            file.__init__(self, name, mode, buffering)
+        else:  # no buffering option in python3
+            file.__init__(self, name, mode)
         self.lock = threading.Semaphore()
         self.__size = None
     def getSize(self):

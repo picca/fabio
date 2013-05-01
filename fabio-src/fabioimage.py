@@ -52,7 +52,7 @@ class fabioimage(object):
             self.header = {}
         else:
             self.header = self.checkHeader(header)
-        self.header_keys = self.header.keys() # holds key ordering
+        self.header_keys = list(self.header.keys())  # holds key ordering, forced as list in python3
         if self.data is not None:
             self.dim2, self.dim1 = self.data.shape
         else:
