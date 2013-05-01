@@ -39,6 +39,7 @@ if force_build:
 import fabio
 from fabio.cbfimage import cbfimage
 from fabio.compression import decByteOffet_numpy, decByteOffet_cython
+from fabio.six import b
 import time
 
 class test_cbfimage_reader(unittest.TestCase):
@@ -92,9 +93,9 @@ class test_cbfimage_reader(unittest.TestCase):
     def test_byte_offset(self):
         """ check byte offset algorythm"""
         cbf = fabio.open(self.cbf_filename)
-        starter = "\x0c\x1a\x04\xd5"
+        starter = b("\x0c\x1a\x04\xd5")
         startPos = cbf.cif["_array_data.data"].find(starter) + 4
-        data = cbf.cif["_array_data.data"][ startPos: startPos + int(cbf.header["X-Binary-Size"])]
+        data = cbf.cif[b("_array_data.data")][ startPos: startPos + int(cbf.header[b("X-Binary-Size")])]
         startTime = time.time()
         numpyRes = decByteOffet_numpy(data, size=cbf.dim1 * cbf.dim2)
         tNumpy = time.time() - startTime

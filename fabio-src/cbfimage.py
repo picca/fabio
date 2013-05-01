@@ -92,28 +92,28 @@ class cbfimage(fabioimage):
             if key != "_array_data.data":
                 print(self.header_keys)
                 self.header_keys.append(key)
-                self.header[key] = self.cif[key].strip(" \"\n\r\t")
+                self.header[key] = self.cif[key].strip(b(" \"\n\r\t"))
 
-        if not "_array_data.data" in self.cif:
-            raise Exception("cbfimage: CBF file %s is corrupt, cannot find data block with '_array_data.data' key" % self.fname)
+        if not b("_array_data.data") in self.cif:
+            raise Exception("cbfimage: CBF file %s is corrupt, cannot find data block with '_array_data.data' key" % self.filename)
 
-        inStream2 = self.cif["_array_data.data"]
-        sep = "\r\n"
+        inStream2 = self.cif[b("_array_data.data")]
+        sep = CIF.CR + CIF.LF
         iSepPos = inStream2.find(sep)
         if iSepPos < 0 or iSepPos > 80:
-            sep = "\n" #switch back to unix representation
+            sep = CIF.LF  # switch back to unix representation
 
         lines = inStream2.split(sep)
         for oneLine in lines[1:]:
             if len(oneLine) < 10:
                 break
             try:
-                key, val = oneLine.split(':' , 1)
+                key, val = oneLine.split(b(':') , 1)
             except ValueError:
-                key, val = oneLine.split('=' , 1)
+                key, val = oneLine.split(b('=') , 1)
             key = key.strip()
             self.header_keys.append(key)
-            self.header[key] = val.strip(" \"\n\r\t")
+            self.header[key] = val.strip(b(" \"\n\r\t"))
         missing = []
         for item in MINIMUM_KEYS:
             if item not in self.header_keys:
@@ -135,21 +135,21 @@ class cbfimage(fabioimage):
         self._readheader(infile)
         # Compute image size
         try:
-            self.dim1 = int(self.header['X-Binary-Size-Fastest-Dimension'])
-            self.dim2 = int(self.header['X-Binary-Size-Second-Dimension'])
+            self.dim1 = int(self.header[b('X-Binary-Size-Fastest-Dimension')])
+            self.dim2 = int(self.header[b('X-Binary-Size-Second-Dimension')])
         except:
-            raise Exception(IOError, "CBF file %s is corrupt, no dimensions in it" % fname)
+            raise IOError("CBF file %s is corrupt, no dimensions in it" % fname)
         try:
-            bytecode = DATA_TYPES[self.header['X-Binary-Element-Type']]
+            bytecode = DATA_TYPES[self.header[b('X-Binary-Element-Type')]]
             self.bpp = len(numpy.array(0, bytecode).tostring())
         except KeyError:
             bytecode = numpy.int32
             self.bpp = 32
             logger.warning("Defaulting type to int32")
-        if self.header["conversions"] == "x-CBF_BYTE_OFFSET":
-            self.data = self._readbinary_byte_offset(self.cif["_array_data.data"]).astype(bytecode).reshape((self.dim2, self.dim1))
+        if self.header[b("conversions")] == b("x-CBF_BYTE_OFFSET"):
+            self.data = self._readbinary_byte_offset(self.cif[b("_array_data.data")]).astype(bytecode).reshape((self.dim2, self.dim1))
         else:
-            raise Exception(IOError, "Compression scheme not yet supported, please contact FABIO development team")
+            raise IOError("Compression scheme not yet supported, please contact FABIO development team")
 
         self.bytecode = self.data.dtype.type
         self.resetvals()
@@ -169,7 +169,7 @@ class cbfimage(fabioimage):
         @rtype: numpy array
         """
         startPos = inStream.find(STARTER) + 4
-        data = inStream[ startPos: startPos + int(self.header["X-Binary-Size"])]
+        data = inStream[ startPos: startPos + int(self.header[b("X-Binary-Size")])]
         try:
             import byte_offset
         except ImportError:
@@ -221,10 +221,10 @@ class cbfimage(fabioimage):
                         "--CIF-BINARY-FORMAT-SECTION----"
                         ]
 
-        if "_array_data.header_contents" not in self.header:
+        if b("_array_data.header_contents") not in self.header:
             nonCifHeaders = []
         else:
-            nonCifHeaders = [i.strip()[2:] for i in self.header["_array_data.header_contents"].split("\n") if i.find("# ") >= 0]
+            nonCifHeaders = [i.strip()[2:] for i in self.header[b("_array_data.header_contents")].split("\n") if i.find("# ") >= 0]
 
         for key in self.header:
             if (key not in self.header_keys):
@@ -246,8 +246,8 @@ class cbfimage(fabioimage):
         if len(nonCifHeaders) > 0:
             self.cif["_array_data.header_contents"] = "\r\n".join(["# %s" % i for i in nonCifHeaders])
 
-        self.cif["_array_data.data"] = "\r\n".join(binary_block)
-        self.cif.saveCIF(fname, linesep="\r\n", binary=True)
+        self.cif["_array_data.data"] = (CIF.CR + CIF.LF).join(binary_block)
+        self.cif.saveCIF(fname, linesep=(CIF.CR+CIF.LF), binary=True)
 
 ################################################################################
 # CIF class
