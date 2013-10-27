@@ -394,7 +394,7 @@ class Frame(object):
             approxHeaderSize += 7 + len(key) + len(str(header[key]))
         approxHeaderSize = BLOCKSIZE * (approxHeaderSize // BLOCKSIZE + 1)
         header_keys.insert(0, "EDF_HeaderSize")
-        header["EDF_HeaderSize"] = str(BLOCKSIZE * (approxHeaderSize // BLOCKSIZE + 1))
+        header["EDF_HeaderSize"] = "%5s" % (approxHeaderSize)
         header_keys.insert(0, "EDF_BinarySize")
         header["EDF_BinarySize"] = len(data.tostring())
         header_keys.insert(0, "EDF_DataBlockID")
@@ -419,11 +419,11 @@ class Frame(object):
             for  idx, line in enumerate(listHeader[:]):
                 if line.startswith("EDF_HeaderSize"):
                     headerSize = BLOCKSIZE * (preciseSize // BLOCKSIZE + 1)
-                    newline = "EDF_HeaderSize = %s ;\n" % headerSize
+                    newline = "EDF_HeaderSize = %5s ;\n" % headerSize
                     delta = len(newline) - len(line)
                     if (preciseSize // BLOCKSIZE) != ((preciseSize + delta) // BLOCKSIZE):
                         headerSize = BLOCKSIZE * ((preciseSize + delta) // BLOCKSIZE + 1)
-                        newline = "EDF_HeaderSize = %s ;\n" % headerSize
+                        newline = "EDF_HeaderSize = %5s ;\n" % headerSize
                     preciseSize = preciseSize + delta
                     listHeader[idx] = newline
                     break
@@ -655,11 +655,10 @@ class edfimage(fabioimage):
 
         """
 
-        outfile = self._open(fname, mode="wb")
-        for i, frame in enumerate(self.__frames):
-            frame.iFrame = i
-            outfile.write(frame.getEdfBlock(force_type=force_type, fit2dMode=fit2dMode))
-        outfile.close()
+        with self._open(fname, mode="wb") as outfile:
+            for i, frame in enumerate(self.__frames):
+                frame.iFrame = i
+                outfile.write(frame.getEdfBlock(force_type=force_type, fit2dMode=fit2dMode))
 
 
     def appendFrame(self, frame=None, data=None, header=None):

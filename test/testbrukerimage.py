@@ -6,7 +6,7 @@
 #built on testedfimage
 """
 
-import unittest, sys, os, logging
+import unittest, sys, os, logging, tempfile
 logger = logging.getLogger("testbrukerimage")
 force_build = False
 
@@ -32,6 +32,7 @@ import fabio
 from fabio.brukerimage import brukerimage
 import numpy
 import bz2, gzip
+import tempfile
 #this is actually a violation of the bruker format since the order of
 # the header items is specified
 #in the standard, whereas the order of a python dictionary is not
@@ -108,6 +109,20 @@ class testgzipbruker(testbruker):
             self.filename += ".gz"
 
 
+class testbrukerLinear(unittest.TestCase):
+    """basic test, test a random array of float32"""
+    fd, filename = tempfile.mkstemp('0000', "bruker")
+    os.close(fd)
+    data = numpy.random.random((500, 550)).astype("float32")
+    
+    def test_linear(self):
+        """ test for self consitency of random data read/write """
+        obj = brukerimage(data=self.data)
+        obj.write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        error = abs(new.data - self.data).max()
+        self.assert_(error < numpy.finfo(numpy.float32).eps, "Error is %s>1e-7" % error)
 
 
 # statistics come from fit2d I think
@@ -124,7 +139,9 @@ class test_real_im(unittest.TestCase):
         """
         download images
         """
+
         self.im_dir = os.path.dirname(UtilsTest.getimage("Cr8F8140k103.0026.bz2"))
+        self.tempdir = tempfile.mkdtemp()
 
     def test_read(self):
         """ check we can read bruker images"""
@@ -142,12 +159,36 @@ class test_real_im(unittest.TestCase):
             self.assertEqual(dim1, obj.dim1, "dim1")
             self.assertEqual(dim2, obj.dim2, "dim2")
 
+    def test_write(self):
+        "Test writing with self consistency at the fabio level"
+        for line in TESTIMAGES.split("\n"):
+            vals = line.split()
+            name = vals[0]
+            obj = brukerimage()
+            ref = brukerimage()
+            fname = os.path.join(self.im_dir, name)
+            obj.read(fname)
+            obj.write(os.path.join(self.tempdir, name))
+            other = brukerimage()
+            other.read(os.path.join(self.tempdir, name))
+            ref.read(fname)
+            self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
+            for key in ref.header:
+                if key in ("filename",):
+                    continue
+                if key not in other.header:
+                    logger.warning("Key %s is missing in new header, was %s" % (key, ref.header[key]))
+                else:
+                    self.assertEqual(ref.header[key], other.header[key], "value are the same for key %s: was %s now %s" % (key, ref.header[key], other.header[key]))
+
 def test_suite_all_bruker():
     testSuite = unittest.TestSuite()
     testSuite.addTest(testbruker("test_read"))
     testSuite.addTest(testbzipbruker("test_read"))
     testSuite.addTest(testgzipbruker("test_read"))
     testSuite.addTest(test_real_im("test_read"))
+    testSuite.addTest(test_real_im("test_write"))
+    testSuite.addTest(testbrukerLinear("test_linear"))
     return testSuite
 
 if __name__ == '__main__':

@@ -15,6 +15,7 @@ else:
 logger = logging.getLogger("fabioutils")
 from .compression import bz2, gzip
 import traceback
+from math import ceil
 
 
 
@@ -87,6 +88,17 @@ def deprecated(func):
         return func(*arg, **kw)
     return wrapper
 
+def pad(mystr, pattern=" ", size=80):
+    """
+    Performs the padding of the string to the right size with the right pattern 
+    """
+    size = int(size)
+    padded_size = int(ceil(float(len(mystr)) / size) * size)
+    if len(pattern) == 1:
+        return mystr.ljust(padded_size, pattern)
+    else:
+        return (mystr + pattern * int(ceil(float(padded_size - len(mystr)) / len(pattern))))[:padded_size]
+
 
 def getnum(name):
     """
@@ -110,7 +122,7 @@ class FilenameObject(object):
             extension=None,
             postnum=None,
             digits=4,
-            filename = None):
+            filename=None):
         """
         This class can either be instanciated by a set of parameters like  directory, prefix, num, extension, ...
 
@@ -258,7 +270,7 @@ def numstem(name):
     except AttributeError: # no digits found
         return [name, "", ""]
 
-@deprecated
+#@deprecated
 def deconstruct_filename(filename):
     """
     Function for backward compatibility.
@@ -423,7 +435,15 @@ class File(file):
         return self.__size
     def setSize(self, size):
         self.__size = size
+    def __exit__(self, *args, **kwargs):
+        """
+        Close the file.
+        """
+        return file.close(self)
+    def __enter__(self, *args, **kwargs):
+        return self
     size = property(getSize, setSize)
+
 
 class UnknownCompressedFile(File):
     """
@@ -509,6 +529,13 @@ else:
                 elif whence == os.SEEK_END:
                     gzip.GzipFile.seek(self, -1)
                     gzip.GzipFile.seek(self, offset + self.tell())
+            def __enter__(self, *args, **kwargs):
+                return self
+            def __exit__(self, *args, **kwargs):
+                """
+                Close the file.
+                """
+                return gzip.GzipFile.close(self)
 
 if bz2 is None:
     BZ2File = UnknownCompressedFile
@@ -547,3 +574,10 @@ else:
         def setSize(self, value):
             self.__size = value
         size = property(getSize, setSize)
+        def __exit__(self, *args, **kwargs):
+                """
+                Close the file.
+                """
+                return bz2.BZ2File.close(self)
+        def __enter__(self, *args, **kwargs):
+            return self
