@@ -20,7 +20,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 # get ready for python3
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "08/01/2015"
+__date__ = "03/02/2015"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "GPL"
@@ -29,10 +29,11 @@ import numpy, logging, sys
 from math import ceil
 import os, getpass, time
 logger = logging.getLogger("brukerimage")
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .fabioutils import pad, StringTypes
 
-class brukerimage(fabioimage):
+
+class BrukerImage(FabioImage):
     """
     Read and eventually write ID11 bruker (eg smart6500) images
 
@@ -138,7 +139,7 @@ class brukerimage(fabioimage):
            ]
 
     def __init__(self, data=None , header=None):
-        fabioimage.__init__(self, data, header)
+        super(self, CbfImage).__init__(self, data, header)
         self.__bpp_file = None
         self.version = 86
         self.__headerstring__ = ""
@@ -394,6 +395,9 @@ class brukerimage(fabioimage):
             self.header["WORDORD"] = "0"
         if not "LONGORD" in self.header:
             self.header["LONGORD"] = "0"
+
+
+brukerimage = BrukerImage
 
 
 def test():

@@ -15,7 +15,7 @@
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli" , "Jon Wright", "Jérôme Kieffer"]
-__date__ = "09/01/2015"
+__date__ = "03/02/2015"
 __status__ = "production"
 __copyright__ = "2007 APS; 2010-2015 ESRF"
 __licence__ = "GPL"
@@ -24,7 +24,7 @@ __licence__ = "GPL"
 import numpy
 import struct, logging
 logger = logging.getLogger("GEimage")
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .fabioutils import next_filename, previous_filename
 
 GE_HEADER_INFO = [
@@ -187,7 +187,7 @@ GE_HEADER_INFO = [
     ]
 
 
-class GEimage(fabioimage):
+class GEimage(FabioImage):
 
     _need_a_seek_to_read = True
 

@@ -1,8 +1,8 @@
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#    Project: Fast Azimuthal Integration
-#             https://github.com/pyFAI/pyFAI
+#    Project: Fable Input/Output image library
+#             https://github.com/kif/fabio
 #
 #
 #    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
@@ -28,9 +28,9 @@ from __future__ import absolute_import, print_function, division
 
 __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
-__license__ = "GPLv3+"
+__license__ = "GPLv2+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "22/01/2015"
+__date__ = "02/02/2015"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
 __doc__ = """
@@ -53,7 +53,7 @@ import time
 from ._version import version
 
 
-logger = logging.getLogger("pyFAI.io")
+logger = logging.getLogger("fabio.nexus")
 try:
     import h5py
 except ImportError as error:
@@ -202,7 +202,7 @@ class Nexus(object):
                         return detector
         return result
 
-    def new_entry(self, entry="entry", program_name="pyFAI", title="description of experiment", force_time=None):
+    def new_entry(self, entry="entry", program_name="FabIO", title="description of experiment", force_time=None):
         """
         Create a new entry
 

@@ -16,7 +16,7 @@ from __future__ import with_statement, print_function
 import sys, logging
 logger = logging.getLogger("openimage")
 from .fabioutils  import FilenameObject
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from . import edfimage
 from . import adscimage
 from . import tifimage

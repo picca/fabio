@@ -34,7 +34,7 @@ except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
 import numpy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .third_party.TiffIO import TiffIO
 
 PIL_TO_NUMPY = { "I;16": numpy.uint16,

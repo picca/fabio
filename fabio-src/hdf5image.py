@@ -23,7 +23,7 @@ __copyright__ = "Jérôme Kieffer"
 __version__ = "11 Nov 2014"
 
 import numpy, logging, os, posixpath, sys, copy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 logger = logging.getLogger("hdf5image")
 if sys.version < '3':
     bytes = str
@@ -51,7 +51,7 @@ class HDF5location(object):
             self.group = None
 
         self.slice = copy.deepcopy(slices)
-        self.last_index = None # where should I increment when next.
+        self.last_index = None  # where should I increment when next.
         if self.slice:
             for i, j  in enumerate(self.slice):
                 if "__len__" in dir(j):
@@ -135,7 +135,7 @@ class HDF5location(object):
         else:
             raise RuntimeError("Changing slices is not allowed without slicing.")
 
-class hdf5image(fabioimage):
+class Hdf5Image(FabioImage):
     """
     FabIO image class for Images from an HDF file
     """
@@ -146,7 +146,7 @@ class hdf5image(fabioimage):
         if not h5py:
             raise RuntimeError("fabio.hdf5image cannot be used without h5py. Please install h5py and restart")
 
-        fabioimage.__init__(self, *arg, **kwargs)
+        super(self, Hdf5Image).__init__(self, *arg, **kwargs)
         self.data = None
         self.header = {}
         self.dim1 = self.dim2 = 0
@@ -233,3 +233,5 @@ class hdf5image(fabioimage):
             newobj = hdf5image()
             newobj.read(previous_filename(self.filename))
             return newobj
+
+hdf5image = Hdf5Image

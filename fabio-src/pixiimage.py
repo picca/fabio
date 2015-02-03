@@ -16,7 +16,7 @@ __version__ = "29 Oct 2013"
 import numpy
 import sys
 import os
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .fabioutils import previous_filename, next_filename
 
 class pixiimage(fabioimage):

@@ -20,7 +20,7 @@ __copyright__ = "Jérôme Kieffer"
 __version__ = "29 Oct 2013"
 
 import numpy, logging, sys
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .fabioutils import previous_filename, next_filename
 logger = logging.getLogger("mrcimage")
 if sys.version_info < (3.0):

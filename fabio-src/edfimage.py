@@ -23,7 +23,7 @@ from __future__ import with_statement, print_function, absolute_import, division
 import os, logging
 logger = logging.getLogger("edfimage")
 import numpy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .fabioutils import isAscii, toAscii, nice_int
 from .compression import decBzip2, decGzip, decZlib
 from .third_party import six
@@ -433,7 +433,7 @@ class Frame(object):
 
 
 
-class edfimage(fabioimage):
+class EdfImage(FabioImage):
     """ Read and try to write the ESRF edf data format """
 
     def __init__(self, data=None , header=None, header_keys=None, frames=None):
@@ -930,3 +930,4 @@ class edfimage(fabioimage):
                 self.__frames[self.currentframe].bpp = _iVal
     bpp = property(getBpp, setBpp)
 
+edfimage = EdfImage

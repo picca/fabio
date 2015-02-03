@@ -18,12 +18,12 @@ __version__ = "06/01/2015"
 import numpy
 import sys
 import struct
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 if sys.version < '3':
     bytes = str
 
 
-class fit2dmaskimage(fabioimage):
+class Fit2dMaskImage(FabioImage):
     """ Read and try to write Andy Hammersley's mask format """
 
 
@@ -122,3 +122,5 @@ class fit2dmaskimage(fabioimage):
             return None
         else:
             return data.astype(int)
+
+fit2dmaskimage = Fit2dMaskImage

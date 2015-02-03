@@ -16,9 +16,9 @@ from __future__ import with_statement, print_function
 
 import numpy, logging
 logger = logging.getLogger("HiPiCimage")
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 
-class HiPiCimage(fabioimage):
+class HiPicImage(FabioImage):
     """ Read HiPic images e.g. collected with a Hamamatsu CCD camera"""
 
 
@@ -41,7 +41,7 @@ class HiPiCimage(fabioimage):
         self.header['Dim_2'] = Dim_2
         self.header['Dim_1_offset'] = Dim_1_offset
         self.header['Dim_2_offset'] = Dim_2_offset
-        #self.header['Comment'] = Comment
+        # self.header['Comment'] = Comment
         if Image_tag != 'IM' :
             # This does not look like an HiPic file
             logging.warning("no opening.  Corrupt header of HiPic file " + \
@@ -82,7 +82,7 @@ class HiPiCimage(fabioimage):
         block = infile.read(self.dim1 * self.dim2 * self.bpp)
         infile.close()
 
-        #now read the data into the array
+        # now read the data into the array
         try:
             self.data = numpy.reshape(
                 numpy.fromstring(block, bytecode),
@@ -94,8 +94,8 @@ class HiPiCimage(fabioimage):
         self.bytecode = self.data.dtype.type
 
         # Sometimes these files are not saved as 12 bit,
-        # But as 16 bit after bg subtraction - which results 
-        # negative values saved as 16bit. Therefore values higher 
+        # But as 16 bit after bg subtraction - which results
+        # negative values saved as 16bit. Therefore values higher
         # 4095 is really negative values
         if self.data.max() > 4095:
             gt12bit = self.data > 4095
@@ -104,3 +104,5 @@ class HiPiCimage(fabioimage):
         # ensure the PIL image is reset
         self.pilimage = None
         return self
+
+HiPiCimage = HiPicImage

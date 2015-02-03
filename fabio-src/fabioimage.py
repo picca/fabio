@@ -25,7 +25,7 @@ except ImportError:
 from . import fabioutils, converters
 
 
-class fabioimage(object):
+class FabioImage(object):
     """
     A common object for images in fable
     Contains a numpy array (.data) and dict of meta data (.header)
@@ -392,11 +392,6 @@ class fabioimage(object):
                                        fabioutils.COMPRESSORS['.bz2'],
                                        fabioutils.BZ2File,
                                        mode)
-            #
-            # Here we return the file even though it may be bzipped or gzipped
-            # but named incorrectly...
-            #
-            # FIXME - should we fix that or complain about the daft naming?
             else:
                 fileObject = fabioutils.File(fname, mode)
             if "name" not in dir(fileObject):
@@ -479,6 +474,8 @@ class fabioimage(object):
                     header=converters.convert_header(self.classname, other.classname, self.header))
         return other
 
+fabioimage = FabioImage
+
 def test():
     """
     check some basic fabioimage functionality
@@ -554,6 +551,7 @@ def test():
     clean()
 
     print ("Passed in %s s" % (time.time() - start))
+
 
 if __name__ == '__main__':
     test()

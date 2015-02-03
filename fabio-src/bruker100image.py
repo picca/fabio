@@ -9,11 +9,10 @@ except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
 
-from .brukerimage import brukerimage
+from .brukerimage import BrukerImage
 from .readbytestream import readbytestream
 
-class bruker100image(brukerimage):
-
+class Bruker100Image(BrukerImage):
 
     def toPIL16(self, filename=None):
         if not Image:
@@ -40,45 +39,49 @@ class bruker100image(brukerimage):
         npixelb = int(self.header['NPIXELB'][0])
         # you had to read the Bruker docs to know this!
 
-        # We are now at the start of the image - assuming 
+        # We are now at the start of the image - assuming
         #   readbrukerheader worked
         # size = rows * cols * npixelb
         self.data = readbytestream(f, f.tell(), rows, cols, npixelb,
                                     datatype="int", signed='n', swap='n')
 
-        noverfl = self.header['NOVERFL'].split() # now process the overflows
-        #read the set of "underflow pixels" - these will be completely 
+        noverfl = self.header['NOVERFL'].split()  # now process the overflows
+        # read the set of "underflow pixels" - these will be completely
         # disregarded for now
         data = self.data
         k = 0
 
-        while k < 2:#for the time being things - are done in 16 bits
+        while k < 2:  # for the time being things - are done in 16 bits
             datatype = {'1' : numpy.uint8,
                         '2' : numpy.uint16,
                         '4' : numpy.uint32 }[("%d" % 2 ** k)]
             ar = numpy.array(numpy.fromstring(f.read(int(noverfl[k]) * (2 ** k)),
                                         datatype), numpy.uint16)
-            #insert the the overflow pixels in the image array:
-            #this is probably a memory intensive way of doing this - 
+            # insert the the overflow pixels in the image array:
+            # this is probably a memory intensive way of doing this -
             # might be done in a more clever way
             lim = 2 ** (8 * k) - 1
-            #generate an array comprising of the indices into data.ravel() 
+            # generate an array comprising of the indices into data.ravel()
             # where its value equals lim.
             M = numpy.compress(numpy.equal(data.ravel(), lim), numpy.arange(rows * cols))
-            #now put values from ar into those indices
+            # now put values from ar into those indices
             numpy.put(data.ravel(), M, ar)
             padding = 16 * int(math.ceil(int(noverfl[k]) * (2 ** k) / 16.)) - \
                          int(noverfl[k]) * (2 ** k)
             f.seek(padding, 1)
-            print ("%s bytes read + %d bytes padding" % (noverfl[k],padding))
+            print ("%s bytes read + %d bytes padding" % (noverfl[k], padding))
             k = k + 1
 
         f.close()
 
         (self.dim1, self.dim2) = (rows, cols)
-        print( self.dim1, self.dim2)
+        print(self.dim1, self.dim2)
         self.resetvals()
         return self
+
+
+bruker100image = Bruker100Image
+
 
 if __name__ == '__main__':
     import sys, time

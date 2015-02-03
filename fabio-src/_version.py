@@ -5,9 +5,9 @@ from __future__ import absolute_import, print_function, division
 
 __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
-__license__ = "GPLv3+"
+__license__ = "GPLv2+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "23/01/2015"
+__date__ = "03/02/2015"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
 __doc__ = """
@@ -18,6 +18,7 @@ provides:
 * version = "1.2.3" or "1.2.3-beta4"
 * version_info = named tuple (1,2,3,"beta",4)
 * hexversion: 0x010203B4
+* strictversion = "1.2.3b4
 
 This is called hexversion since it only really looks meaningful when viewed as the 
 result of passing it to the built-in hex() function. 
@@ -36,22 +37,30 @@ Thus 2.1.0a3 is hexversion 0x020100a3.
 """
 
 MAJOR = 0
-MINOR = 2
-MICRO = 1
+MINOR = 3
+MICRO = 0
 RELEV = "dev"  # <16
 SERIAL = 0  # <16
 
+RELEASE_LEVEL_VALUE = { "dev": 0,
+                       "alpha": 10,
+                       "beta": 11,
+                       "gamma": 11,
+                       "rc": 12,
+                       "final":15}
 
 from collections import namedtuple
 _version_info = namedtuple("version_info", ["major", "minor", "micro", "releaselevel", "serial"])
 
-version_info = _version_info(MAJOR, MINOR, MICRO, RELEV, SERIAL)
+strictversion = version = "%d.%d.%d" % version_info[:3]
 
-version = "%d.%d.%d" % version_info[:3]
 if version_info.releaselevel != "final":
     version += "-%s%s" % version_info[-2:]
+    prerel = "a" if RELEASE_LEVEL_VALUE.get(version_info[3], 0) < 10 else "b"
+    if prerel not in "ab":
+        prerel = "a"
+    strictversion += prerel + str(version_info[-1])
 
-RELEASE_LEVEL_VALUE = { "dev": 0, "alpha": 10, "beta": 11, "gamma": 11, "final":15}
 hexversion = version_info[4]
 hexversion |= RELEASE_LEVEL_VALUE.get(version_info[3], 0) * 1 << 4
 hexversion |= version_info[2] * 1 << 8

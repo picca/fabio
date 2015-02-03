@@ -8,12 +8,10 @@ Read the fit2d ascii image output
 from __future__ import absolute_import, print_function, with_statement, division
 import numpy
 
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 
 
-
-
-class fit2dspreadsheetimage(fabioimage):
+class Fit2dSpreadSheetImage(FabioImage):
     """
     Read a fit2d ascii format
     """
@@ -54,7 +52,7 @@ class fit2dspreadsheetimage(fabioimage):
 
         self.bpp = len(numpy.array(0, bytecode).tostring())
 
-        #now read the data into the array
+        # now read the data into the array
         try:
             vals = []
             for line in infile.readlines():
@@ -74,10 +72,13 @@ class fit2dspreadsheetimage(fabioimage):
         return self
 
 
+fit2dspreadsheetimage = Fit2dSpreadSheetImage
+
+
 if __name__ == "__main__":
     import sys, time
     start = time.time()
-    img = fit2dspreadsheetimage()
+    img = Fit2dSpreadSheetImage()
     img.read(sys.argv[1])
     print(time.time() - start)
     print(img.dim1, img.dim2, img.data.shape)

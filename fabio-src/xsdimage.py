@@ -15,7 +15,7 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging, numpy
 logger = logging.getLogger("xsdimage")
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .third_party import six
 import base64, hashlib
 try:

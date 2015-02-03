@@ -20,11 +20,12 @@ __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __version__ = "17 Oct 2012"
 
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 import numpy, logging
 logger = logging.getLogger("binaryimage")
 
-class binaryimage(fabioimage):
+
+class BinaryImage(FabioImage):
     """
     This simple library has been made for manipulating exotic/unknown files format.
 
@@ -36,7 +37,7 @@ class binaryimage(fabioimage):
     """
 
     def __init__(self, *args, **kwargs):
-        fabioimage.__init__(self, *args, **kwargs)
+        super(self, BinaryImage).__init__(self, *args, **kwargs)
 
     @staticmethod
     def swap_needed(endian):
@@ -74,7 +75,7 @@ class binaryimage(fabioimage):
             f.seek(offset)
         else:
             try:
-                f.seek(-size + offset + 1, 2) #seek from EOF backwards
+                f.seek(-size + offset + 1, 2)  # seek from EOF backwards
             except IOError:
                 logging.warn('expected datablock too large, please check bytecode settings: {}'.format(bytecode))
             except:
@@ -102,3 +103,4 @@ class binaryimage(fabioimage):
             outfile.write(self.data.tostring())
 
 
+binaryimage = BinaryImage

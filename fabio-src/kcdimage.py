@@ -11,7 +11,7 @@ from __future__ import with_statement, print_function
 
 import numpy, logging
 import os, string
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 logger = logging.getLogger("kcdimage")
 from .third_party import six
 DATA_TYPES = {"u16"  :  numpy.uint16 }
@@ -31,7 +31,7 @@ else:
     ALPHANUM = bytes(string.digits + string.ascii_letters + ". ", encoding="ASCII")
 
 
-class kcdimage(fabioimage):
+class KcdImage(FabioImage):
     """ 
     Read the Nonius kcd data format """
 
@@ -138,3 +138,5 @@ class kcdimage(fabioimage):
             return None
         else:
             return data.astype(int)
+
+kcdimage = KcdImage

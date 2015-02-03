@@ -15,14 +15,15 @@ Authors: Henning O. Sorensen & Erik Knudsen
 # Get ready for python3:
 from __future__ import with_statement, print_function
 import numpy, logging
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .fabioutils import to_str
 logger = logging.getLogger("adscimage")
 
-class adscimage(fabioimage):
+
+class AdscImage(FabioImage):
     """ Read an image in ADSC format (quite similar to edf?) """
     def __init__(self, *args, **kwargs):
-        fabioimage.__init__(self, *args, **kwargs)
+        super(self, AdscImage).__init__(self, *args, **kwargs)
 
     def read(self, fname, frame=None):
         """ read in the file """
@@ -108,6 +109,9 @@ class adscimage(fabioimage):
             outf.write(self.data.byteswap().astype(
                     numpy.uint16).tostring())
         outf.close()
+
+
+adscimage = AdscImage
 
 
 def test():

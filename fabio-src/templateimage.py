@@ -52,7 +52,7 @@ __version__ = "17 Oct 2012"
 import logging
 logger = logging.getLogger("templateimage")
 import numpy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 
 
 

@@ -21,9 +21,9 @@ Authors: Henning O. Sorensen & Erik Knudsen
 # Get ready for python3:
 from __future__ import with_statement, print_function
 import numpy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 
-class GEimage(fabioimage):
+class GEimage(FabioImage):
 
 
     def _readheader(self, infile):

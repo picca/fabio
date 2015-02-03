@@ -23,7 +23,7 @@ __copyright__ = ""
 __version__ = "23 Nov 2013"
 import logging, struct, os
 import numpy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 logger = logging.getLogger("raxisimage")
 
 

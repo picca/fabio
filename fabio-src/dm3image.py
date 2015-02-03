@@ -12,7 +12,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 from __future__ import with_statement, print_function
 import logging
 import numpy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 logger = logging.getLogger("dm3image")
 
 DATA_TYPES = {  2     :  numpy.int16,
@@ -45,10 +45,10 @@ DATA_BYTES = {  2     :  2,
 
 
 
-class dm3image(fabioimage):
+class Dm3Image(FabioImage):
     """ Read and try to write the dm3 data format """
     def __init__(self, *args, **kwargs):
-        fabioimage.__init__(self, *args, **kwargs)
+        super(self, Dm3Image).__init__(self, *args, **kwargs)
         self.encoded_datatype = None
         self.no_data_elements = None
         self.grouptag_is_sorted = None
@@ -63,10 +63,10 @@ class dm3image(fabioimage):
 
     def _readheader(self):
         self.infile.seek(0)
-        file_format = self.readbytes(4, numpy.uint32)[0] # should be 3
+        file_format = self.readbytes(4, numpy.uint32)[0]  # should be 3
         assert file_format == 3, 'Wrong file type '
         self.bytes_in_file = self.readbytes(4, numpy.uint32)[0]
-        self.byte_order = self.readbytes(4, numpy.uint32)[0] # 0 = big, 1= little
+        self.byte_order = self.readbytes(4, numpy.uint32)[0]  # 0 = big, 1= little
         logger.info('read dm3 file - file format %s' % file_format)
         logger.info('Bytes in file: %s' % self.bytes_in_file)
         logger.info('Byte order: %s  - 0 = bigEndian , 1 = littleEndian' % self.byte_order)
@@ -100,7 +100,7 @@ class dm3image(fabioimage):
         (dim1_binning, dim2_binning) = (eval(dim1_binning), eval(dim2_binning))
         self.dim1 = dim1_raw / dim1_binning
         self.dim2 = dim2_raw / dim2_binning
-        #print dim1,dim2
+        # print dim1,dim2
         if self.header.has_key('Data'):
             self.data = self.header['Data'].reshape(self.dim1, self.dim2)
 
@@ -172,22 +172,22 @@ class dm3image(fabioimage):
         # are the data stored in a complex array ?
         # print 'tag_type + data_type', self.tag_encoded_type,self.tag_data_type
 
-        #print self.tag_encoded_type , self.tag_data_type
+        # print self.tag_encoded_type , self.tag_data_type
         if self.tag_encoded_type == 20 and self.tag_data_type > 3 :
             self.tag_encoded_type = self.readbytes(4, numpy.uint32)[0]
             logger.debug('found array - new tag_encoded_type %s', self.tag_encoded_type)
-            if self.tag_encoded_type == 15:            # struct type
-                 ###type = self.readbytes(4,numpy.int32)
+            if self.tag_encoded_type == 15:  # struct type
+                 # ##type = self.readbytes(4,numpy.int32)
                 struct_name_length = self.readbytes(4, numpy.int32)[0]
                 struct_number_fields = self.readbytes(4, numpy.int32)[0]
-                #print 'struct - name_length, number_field',  struct_name_length,struct_number_fields
-                #print self.infile.read(struct_name_length)
+                # print 'struct - name_length, number_field',  struct_name_length,struct_number_fields
+                # print self.infile.read(struct_name_length)
                 field_info = []
                 for i in range(struct_number_fields):
                     field_info.append([self.readbytes(4, numpy.int32)[0], self.readbytes(4, numpy.int32)[0]])
-                #print field_info
+                # print field_info
                 self.no_data_elements = self.readbytes(4, numpy.int32)[0]
-                #print '%i data elemets stored as ' %self.no_data_elements
+                # print '%i data elemets stored as ' %self.no_data_elements
                 bytes_in_struct = 0
                 for i in range(struct_number_fields):
                     bytes_in_struct += DATA_BYTES[field_info[i][1]]
@@ -196,19 +196,19 @@ class dm3image(fabioimage):
                 return None
 
 
-        if self.tag_encoded_type == 15:            # struct type
-            ###type = self.readbytes(4,numpy.int32)
+        if self.tag_encoded_type == 15:  # struct type
+            # ##type = self.readbytes(4,numpy.int32)
             struct_name_length = self.readbytes(4, numpy.int32)[0]
             struct_number_fields = self.readbytes(4, numpy.int32)[0]
-            #print 'struct - name_length, number_field',  struct_name_length,struct_number_fields
-            #print self.infile.read(struct_name_length)
+            # print 'struct - name_length, number_field',  struct_name_length,struct_number_fields
+            # print self.infile.read(struct_name_length)
             field_info = []
             for i in range(struct_number_fields):
                 field_info.append([self.readbytes(4, numpy.int32)[0], self.readbytes(4, numpy.int32)[0]])
-            #print field_info
+            # print field_info
             field_data = ''
             for i in range(struct_number_fields):
-                #print type(i)
+                # print type(i)
                 field_data = field_data + self.readbytes(field_info[i][0], None, swap=False) + ' '
                 field_data = field_data + '%i  ' % self.readbytes(DATA_BYTES[field_info[i][1]],
                                                                  DATA_TYPES[field_info[i][1]],
@@ -218,3 +218,4 @@ class dm3image(fabioimage):
     def read_data(self):
         self.encoded_datatype = numpy.fromstring(self.infile.read(4), numpy.uint32).byteswap()
 
+dm3Image = Dm3Image
